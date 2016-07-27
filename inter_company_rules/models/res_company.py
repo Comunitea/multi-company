@@ -36,9 +36,9 @@ class res_company(models.Model):
         "the administrator by-passes the record rules, which is a problem "
         "when Odoo reads taxes on products.")
     warehouse_id = fields.Many2one(
-        "stock.warehouse", string="Warehouse For Purchase Orders",
-        help="Default value to set on Purchase Orders that "
-        "will be created based on Sale Orders made to this company")
+        "stock.warehouse", string="Warehouse For Orders",
+        help="Default value to set on Orders that "
+        "will be created based on Orders made to this company")
 
     @api.model
     def _find_company_from_partner(self, partner_id):

@@ -101,6 +101,15 @@ class purchase_order(models.Model):
                                                    'invoice',
                                                    'delivery',
                                                    'contact'])
+
+        warehouse = (company.warehouse_id and
+                     company.warehouse_id.company_id.id == company.id and
+                     company.warehouse_id or False)
+        if not warehouse:
+            raise Warning(_(
+                'Configure correct warehouse for company(%s) from '
+                'Menu: Settings/companies/companies' % (company.name)))
+
         return {
             'name': (self.env['ir.sequence'].sudo().next_by_code('sale.order')
                      or '/'),
@@ -116,7 +125,8 @@ class purchase_order(models.Model):
             'auto_generated': True,
             'auto_purchase_order_id': self.id,
             'partner_shipping_id': (direct_delivery_address or
-                                    partner_addr['delivery'])
+                                    partner_addr['delivery']),
+            'warehouse_id': warehouse.id
         }
 
     @api.model
@@ -132,7 +142,7 @@ class purchase_order(models.Model):
         price = line.price_unit or 0.0
         taxes = line.taxes_id
         if line.product_id:
-            taxes = line.product_id.taxes_id
+            taxes = line.product_id.sudo().taxes_id
         company_taxes = [tax_rec.id
                          for tax_rec in taxes
                          if tax_rec.company_id.id == company.id]

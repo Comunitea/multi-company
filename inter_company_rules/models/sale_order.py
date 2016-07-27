@@ -148,7 +148,7 @@ class sale_order(models.Model):
         # It may not affect because of parallel company relation
         taxes = so_line.tax_id
         if so_line.product_id:
-            taxes = so_line.product_id.supplier_taxes_id
+            taxes = so_line.product_id.sudo().supplier_taxes_id
 
         # fetch taxes by company not by inter-company user
         company_taxes = [tax_rec.id for tax_rec in taxes
